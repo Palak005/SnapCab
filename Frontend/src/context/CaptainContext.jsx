@@ -7,7 +7,13 @@ export const CaptainContext = ()=>{
 }
 
 const CaptainContextProvider = ({children})=>{
-    const [captain, setCaptain] = useState({});
+    let data = localStorage.getItem("captainToken") || null;
+
+    if(data){
+       data = JSON.parse(data).captain; 
+    }  
+
+    const [captain, setCaptain] = useState(data||null);
 
     return (
         <CaptainDataContext.Provider value={[captain, setCaptain]}>

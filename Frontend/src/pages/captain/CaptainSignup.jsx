@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
 import { CaptainContext } from "../../context/CaptainContext";
+import toast from "react-hot-toast";
 
 const CaptainSignup = () => {
     const navigate = useNavigate();
@@ -27,25 +28,33 @@ const CaptainSignup = () => {
         e.preventDefault();
 
         try{
-            console.log(captainDetails);
             const response = await axios.post("/api/captain/signup", captainDetails);
-
-            console.log("Captain Signed Up : ", response.data.message);
-            setCaptain(response.data.captain);
-            localStorage.setItem("captainToken", response.data.captainToken);
+            const data = response.data;
             
-            navigate("/captain-home");
+            setCaptain(data.captain);
+            const token = {
+                captain : data.captain,
+                expiry : new Date().getTime() + 24*60*60*1000
+            }
+
+            localStorage.setItem("captainToken", JSON.stringify(token));
+            
+            toast.success(data.message);
+            
+            navigate("/captain/home");
+
         }catch(error){
+            toast.error(error.response.data.message);
             console.error('Captain Signup failed:', error.response?.data || error.message);
         }
     };
 
     return (
-        <div className="max-h-screen bg-gray-50 flex items-center justify-center px-6">
+        <div className="max-h-screen bg-gray-50 flex items-center justify-center mt-15">
             <div className="w-full max-w-xl bg-white rounded-2xl shadow-2xl p-4 px-15 mt-5">
-                <h2 className="text-3xl font-extrabold text-[#1a355b] mb-5 text-center">
+                {/* <h2 className="text-3xl font-extrabold text-[#1a355b] mb-5 text-center">
                     SignUp as Captain
-                </h2>
+                </h2> */}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
@@ -103,6 +112,7 @@ const CaptainSignup = () => {
                                 value={captainDetails.color}
                                 className="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                                 onChange={handleChange}
+                                required
                             />
                             <input
                                 id="plate"
@@ -112,6 +122,7 @@ const CaptainSignup = () => {
                                 value={captainDetails.plate}
                                 className="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                                 onChange={handleChange}
+                                required
                             />
                         </div>
 
@@ -124,6 +135,7 @@ const CaptainSignup = () => {
                                 value={captainDetails.capacity}
                                 className="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                                 onChange={handleChange}
+                                required
                             />
                             <select
                                 id="vehicleType"
@@ -131,11 +143,13 @@ const CaptainSignup = () => {
                                 value={captainDetails.vehicleType}
                                 className="w-full px-3 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                                 onChange={handleChange}
+                                required
                             >
                                 <option value="">Select Type</option>
                                 <option value="Car">Car</option>
                                 <option value="Bike">Bike</option>
                                 <option value="Auto">Auto</option>
+                                <option value="Tukk Tukk">Tukk Tukk</option>
                             </select>
                         </div>
                     </div>
@@ -149,13 +163,13 @@ const CaptainSignup = () => {
 
                 <div className="text-center text-base text-gray-600 mt-4">
                     Already have an Account?
-                    <Link to="/captain-login" className="ml-2 text-black font-medium underline transition">
+                    <Link to="/captain/login" className="ml-2 text-black font-medium underline transition">
                         Login
                     </Link>
                 </div>
 
                 <div className="mt-8 w-full h-[50px] rounded-lg flex items-center justify-center">
-                    <Link to="/signup"
+                    <Link to="/user/signup"
                         className="w-full py-3 rounded-lg bg-[#1a355b] text-white text-base text-center font-medium hover:bg-[#1a355bc4] transition"
                     >
                         Signup as User

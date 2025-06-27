@@ -87,3 +87,34 @@ export const getAutoSuggestions = async({address, token})=>{
         console.log(error.message);
     }
 }
+
+const toRadians = (degrees)=>{
+  return degrees * (Math.PI / 180);
+}
+
+// The Haversine formula to calculate distance between two point using their coordinates
+export const calculateDistance = async({pickup, destination})=> {
+    console.log(pickup, destination);
+  const coord1 = await getGeocode(pickup);
+  const coord2 = await getGeocode(destination);
+
+//   console.log(coord1 , coord2);
+
+  const lat1 = coord1.lat;
+  const lon1 = coord1.lon;
+  const lat2 = coord2.lat;
+  const lon2 = coord2.lon;
+
+  const R = 6371; 
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRadians(lat1)) *
+    Math.cos(toRadians(lat2)) *
+    Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}

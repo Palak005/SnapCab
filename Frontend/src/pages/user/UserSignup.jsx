@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
 import { UserContext } from "../../context/UserContext";
+import toast from "react-hot-toast";
 
 const UserSignup = () => {
     const [user, setUser] = UserContext();
@@ -25,14 +26,21 @@ const UserSignup = () => {
         try{
 
             const response = await axios.post("/api/user/signup", userDetails);
+            const data = response.data;
 
-            console.log("Signup Successfull : ", response.data);
-            setUser(response.data.user);
-            localStorage.setItem("userToken", JSON.stringify(response.data.userToken));
+            setUser(data.user);
+            const token = {
+                user : data.user,
+                expiry : new Date().getTime() + 24*60*6*1000,
+            }
 
-            navigate("/home");
+            localStorage.setItem("userToken", JSON.stringify(token));
+
+            toast.success(data.message);
+            navigate("/user/createRide");
         }catch(error){
-            console.error('User Signup failed:', error.response?.data || error.message);
+            toast.error(error.response.data.message);
+            console.error('User Signup failed:', error.response?.data.message);
         }
     };
 
@@ -55,6 +63,7 @@ const UserSignup = () => {
                             value={userDetails.username}
                             className="w-full px-5 py-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                             onChange={handleChange}
+                            required
                         />
                     </div>
                     <div>
@@ -68,6 +77,7 @@ const UserSignup = () => {
                             value={userDetails.email}
                             className="w-full px-5 py-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                             onChange={handleChange}
+                            required
                         />
                     </div>
                     <div>
@@ -81,6 +91,7 @@ const UserSignup = () => {
                             value={userDetails.password}
                             className="w-full px-5 py-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                             onChange={handleChange}
+                            required
                         />
                     </div>
                     <button
@@ -93,13 +104,13 @@ const UserSignup = () => {
 
                 <div className="text-center text-base text-gray-600 mt-8">
                     Already have an Account?
-                    <Link to="/login" className="ml-2 text-black font-medium underline hover:bg-gray-200 transition">
+                    <Link to="/user/login" className="ml-2 text-black font-medium underline hover:bg-gray-200 transition">
                         Login
                     </Link>
                 </div>
 
                 <div className="mt-8 w-full h-[50px] rounded-lg flex items-center justify-center">
-                    <Link to="/captain-signup"
+                    <Link to="/captain/signup"
                         className="w-full py-4 rounded-lg bg-[#1a355b] text-white text-base text-center font-medium hover:bg-[#1a355bd0] transition"
                     >
                         Signup as Captain

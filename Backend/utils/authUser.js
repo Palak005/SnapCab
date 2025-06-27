@@ -1,24 +1,24 @@
 import jwt from "jsonwebtoken";
-import {User} from "../models/user.model.js";
+import User from "../models/user.model.js";
 
 const authUser = async(req, res, next)=>{
     try{
-        const {token} = req.cookies;
-        if(!token){
+        const {userToken} = req.cookies;
+        if(!userToken){
             return res.status(400).json({
-                message : "Token Doesn't exist"
+                message : "userToken Doesn't exist"
             });
         }
 
-        //Verifying the token
-        const decode = jwt.verify(token, process.env.JWT_SECRET);
+        //Verifying the userToken
+        const decode = jwt.verify(userToken, process.env.SECRET_KEY);
 
         //Finding the corresponding user;
         const user = await User.findById(decode.userId).select("-password");
 
         if(!user){
             return res.status(400).json({
-                message : "Invalid Token As User Doesn't exist"
+                message : "Invalid userToken As User Doesn't exist"
             });
         }
         req.user = user;

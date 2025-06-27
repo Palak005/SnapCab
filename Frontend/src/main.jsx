@@ -5,9 +5,12 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import UserContextProvider from './context/UserContext.jsx'
 import CaptainContextProvider from './context/CaptainContext.jsx'
+import {Toaster} from "react-hot-toast";
+import { SocketContextProvider } from './context/SocketContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <SocketContextProvider>
     <BrowserRouter>
     <CaptainContextProvider>
     <UserContextProvider>
@@ -15,5 +18,7 @@ createRoot(document.getElementById('root')).render(
     </UserContextProvider>
     </CaptainContextProvider>
     </BrowserRouter>
+    </SocketContextProvider>
+    <Toaster/>
   </StrictMode>
 )

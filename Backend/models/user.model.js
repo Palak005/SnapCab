@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
         required : true,
         minlength : [5, "Password should be atleast 5 characters long"],
     },
-    sockedId : {
+    socketId : {
         //For tracking the user location
         type : String,
     }

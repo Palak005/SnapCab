@@ -30,7 +30,7 @@ const Signup = async(req, res)=>{
         });
 
         if(!newCaptain){
-            return res.status(401).send("Error while creating your captain profile");
+            return res.status(401).send({message : "Error while creating your captain profile"});
         }
 
         //generating token
@@ -62,7 +62,7 @@ const Login = async(req, res)=>{
         const captain = await Captain.findOne({email});
 
         if(!captain){
-            return res.status(400).send({message : "captain Does not Exists"});
+            return res.status(400).send({message : "Captain Does not Exists"});
         }
 
         //Comparing Password
@@ -76,10 +76,11 @@ const Login = async(req, res)=>{
         const token = captain.generateAuthToken();
 
         //setting cookie
+
         res.cookie("captainToken", token);
 
         res.status(201).json({
-            "message" : "Captain logged in successfully",
+            message : "Captain logged in Successfully",
             captain,
             captainToken : token
         });

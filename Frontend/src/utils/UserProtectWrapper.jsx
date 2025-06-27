@@ -3,10 +3,20 @@ import { useNavigate } from "react-router-dom";
 
 const UserProtectWrapper = ({children})=>{
     const navigate = useNavigate();
-    const userToken = localStorage.getItem("userToken");
+    const data = localStorage.getItem("userToken");
+    const userToken = JSON.parse(data);
 
     useEffect(()=>{
-        if(!userToken) navigate("/login");
+        if(!userToken){
+           navigate("/user/login");
+           return; 
+        } 
+
+        if(userToken.expiry<new Date().getTime()){
+            //Removing expired token
+            localStorage.removeItem("userToken");
+            navigate("/user/login");
+        }
     });
 
     return <>

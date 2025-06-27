@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios"
 import { CaptainContext } from "../../context/CaptainContext";
+import toast from "react-hot-toast";
 
 const CaptainLogin = () => {
     const [captain, setCaptain] = CaptainContext();
@@ -12,24 +13,28 @@ const CaptainLogin = () => {
     const handleSubmit = async(e) => {
         e.preventDefault();   
         
-        alert("Form submitted : ");
-        const captainData = {
-            email,
-            password
-        }
-        
         try{
-            const response = await axios.post('api/captain/login', captainData);
+            const response = await axios.post('/api/captain/login', {
+                email,
+                password
+            });
 
-            console.log("Captain Logged in : ", response.data.message);
-            setCaptain(response.data.captain);
-            localStorage.setItem("captainToken", response.data.captainToken);
-            console.log(captain);
+            const data = response.data;
             
-            navigate("/home");
+            setCaptain(data.captain);
+            const token = {
+                captain : data.captain,
+                expiry : new Date().getTime() + 24*60*60*1000
+            }
+
+            localStorage.setItem("captainToken", JSON.stringify(token));
+            
+            toast.success(data.message);
+            navigate("/captain/home");
 
         } catch(error){
-            console.error('Login failed:', error.response?.data || error.message);
+            toast.error(error.response.data.message);
+            console.error('Login failed:', error);
         }
     };
 
@@ -52,6 +57,7 @@ const CaptainLogin = () => {
                             value={email}
                             className="w-full px-5 py-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                             onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                     </div>
 
@@ -66,6 +72,7 @@ const CaptainLogin = () => {
                             value={password}
                             className="w-full px-5 py-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                             onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
 
@@ -79,13 +86,13 @@ const CaptainLogin = () => {
 
                 <div className="text-center text-base text-gray-600 mt-8">
                     Don't have an Account?
-                    <Link to="/captain-signup" className="ml-2 text-black font-medium underline hover:bg-gray-200 transition">
+                    <Link to="/captain/signup" className="ml-2 text-black font-medium underline hover:bg-gray-200 transition">
                         Signup
                     </Link>
                 </div>
 
                 <div className="mt-8 w-full h-[50px] rounded-lg flex items-center justify-center">
-                    <Link to="/login"
+                    <Link to="/user/login"
                         className="w-full py-4 rounded-lg bg-[#1a355b] text-white text-base text-center font-medium hover:bg-[#1a355bd3] transition"
                     >
                         Login as User

@@ -8,10 +8,11 @@ export const UserContext = ()=>{
 
 
 const UserContextProvider = ({children})=>{
-    const [user, setUser] = useState({
-        username : "",
-        email : ""
-    });
+    const data = localStorage.getItem("userToken") || null;
+    if(!data) return;
+
+    const curr = JSON.parse(data).user;
+    const [user, setUser] = useState(curr||null);
 
     return (
         <UserDataContext.Provider value={[user, setUser]}>

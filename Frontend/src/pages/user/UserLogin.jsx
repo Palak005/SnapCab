@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { data, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
+import toast from "react-hot-toast";
 
 const UserLogin = () => {
     const [user, setUser] = UserContext();
@@ -17,16 +18,23 @@ const UserLogin = () => {
         }
         
         try{
-            const response = await axios.post('api/user/login', userData);
+            const response = await axios.post('/api/user/login', userData);
+            const data = response.data;
 
-            console.log("Success : ", response.data);
-            setUser(response.data.user);
-            localStorage.setItem("userToken", JSON.stringify(response.data.userToken));
+            setUser(data.user);
+            const token = {
+                user : data.user,
+                expiry : new Date().getTime() + 24*60*60*1000,
+            }
 
-            navigate("/home");
+            localStorage.setItem("userToken", JSON.stringify(token));
+
+            toast.success(data.message);
+            navigate("/user/createRide");
 
         } catch(error){
-            console.error('Login failed:', error.response?.data || error.message);
+            toast.error( error.response.data.message);
+            console.error('Login failed:', error.response.data.message);
         }
     };
 
@@ -49,6 +57,7 @@ const UserLogin = () => {
                             value={email}
                             className="w-full px-5 py-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                             onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                     </div>
 
@@ -63,6 +72,7 @@ const UserLogin = () => {
                             value={password}
                             className="w-full px-5 py-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black text-gray-800 text-base transition"
                             onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                     </div>
 
@@ -76,13 +86,13 @@ const UserLogin = () => {
 
                 <div className="text-center text-base text-gray-600 mt-8">
                     Don't have an Account?
-                    <Link to="/signup" className="ml-2 text-black font-medium underline hover:bg-gray-200 transition">
+                    <Link to="/user/signup" className="ml-2 text-black font-medium underline hover:bg-gray-200 transition">
                         Signup
                     </Link>
                 </div>
 
                 <div className="mt-8 w-full h-[50px] rounded-lg flex items-center justify-center">
-                    <Link to="/captain-login"
+                    <Link to="/captain/login"
                         className="w-full py-4 rounded-lg bg-[#1a355b] text-white text-base text-center font-medium hover:bg-[#1a355bce] transition"
                     >
                         Login as Captain

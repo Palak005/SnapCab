@@ -19,7 +19,7 @@ const captainSchema = new mongoose.Schema({
         required : true,
         minLength: [5, "Password should be atleast 5 characters long"],
     },
-    sockedId : {
+    socketId : {
         //For tracking the captain location
         type : String,
     },
@@ -43,7 +43,7 @@ const captainSchema = new mongoose.Schema({
         },
         vehicleType : {
             type : String,
-            enum : ["Car", "Bike", "Auto"],
+            enum : ["Car", "Bike", "Auto", "Tukk Tukk"],
             default : "Car",
         }
     },

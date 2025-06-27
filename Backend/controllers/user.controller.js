@@ -31,7 +31,7 @@ const Signup = async(req, res)=>{
         res.cookie("userToken", token);
 
         res.status(201).json({
-            message: "user signed up successfully",
+            message: "User Signed Up Successfully",
             user: newUser,
             userToken : token
         });
@@ -62,6 +62,7 @@ const Login = async(req, res)=>{
         if(!isValid){
             return res.status(400).send({message : "Email or Password incorrect"});
         }
+        console.log("Login")
 
         //generating toke
         const token = user.generateAuthToken();
