@@ -1,6 +1,8 @@
 import { getFare } from "../services/ride.services.js";
 import Ride from "../models/ride.model.js";
-import { calculateDistance } from "../services/map.services.js";
+import { calculateDistance, captainInRadius } from "../services/map.services.js";
+import { broadCastRide } from "../server.js";
+import Captain from "../models/captain.model.js";
 
 
 const getRide = async(req, res)=>{
@@ -49,7 +51,10 @@ const createRide =  async(req, res)=>{
             return res.status(400).json({message : "All fields are required"});
         }
 
-        const distance = await calculateDistance({pickup, destination});
+        const data = await calculateDistance({pickup, destination});
+        const distance = data.distance;
+        const pickupCoord = data.coord;
+
         const fare = getFare({distance, vehicleType});
 
         const newRide = await Ride.create({
@@ -65,6 +70,12 @@ const createRide =  async(req, res)=>{
             return res.status(400).json({ message : "Ride creation failed." });
         }
 
+        //Finding all the captains within 2km distance from pickup point
+        const captains = await captainInRadius({lat : pickupCoord.lat, long : pickupCoord.long, radius : 15});
+        // console.log("broadcasting to ", {lat : pickupCoord.lat, long : pickupCoord.long, radius : 3}, captains);
+
+        broadCastRide({captains, ride:newRide});
+        
         return res.status(201).json({ message : "Ride Created Successfully",  ride: newRide });
 
     }catch(error){

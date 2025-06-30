@@ -2,6 +2,7 @@ import { Router } from "express";
 import Ride from "../models/ride.model.js"
 import rideController from "../controllers/ride.controller.js";
 import authUser from "../utils/authUser.js";
+import { captainInRadius } from "../services/map.services.js";
 
 const router = Router();
 

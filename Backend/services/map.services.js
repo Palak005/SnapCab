@@ -1,5 +1,6 @@
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import Captain from "../models/captain.model.js";
 
 export const getMapToken = async(req, res)=>{
     const {mapAccessToken} = req.cookies;
@@ -57,7 +58,7 @@ export const getGeocode = async(address)=>{
     const coord = {
         address,
         lat : data.lat, 
-        lon : data.lon
+        long : data.lon
     }
     
     return coord;
@@ -98,23 +99,39 @@ export const calculateDistance = async({pickup, destination})=> {
   const coord1 = await getGeocode(pickup);
   const coord2 = await getGeocode(destination);
 
-//   console.log(coord1 , coord2);
-
   const lat1 = coord1.lat;
-  const lon1 = coord1.lon;
+  const long1 = coord1.long;
   const lat2 = coord2.lat;
-  const lon2 = coord2.lon;
+  const long2 = coord2.long;
 
   const R = 6371; 
   const dLat = toRadians(lat2 - lat1);
-  const dLon = toRadians(lon2 - lon1);
+  const dLong = toRadians(long2 - long1);
 
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos(toRadians(lat1)) *
     Math.cos(toRadians(lat2)) *
-    Math.sin(dLon / 2) ** 2;
+    Math.sin(dLong / 2) ** 2;
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  const distance = R * c;
+
+  return {distance, coord : coord1};
+}
+
+export const captainInRadius = async({lat, long, radius})=>{
+    try{
+        const captains = await Captain.find({
+            location : {
+                $geoWithin: {
+                    $centerSphere : [[lat, long], radius/6371]
+                }
+            }
+        })
+
+        return captains;
+    }catch(error){
+        console.log(error.message);
+    }
 }

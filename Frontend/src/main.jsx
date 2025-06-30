@@ -9,8 +9,7 @@ import {Toaster} from "react-hot-toast";
 import { SocketContextProvider } from './context/SocketContext.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <SocketContextProvider>
+  <SocketContextProvider>
     <BrowserRouter>
     <CaptainContextProvider>
     <UserContextProvider>
@@ -18,7 +17,6 @@ createRoot(document.getElementById('root')).render(
     </UserContextProvider>
     </CaptainContextProvider>
     </BrowserRouter>
-    </SocketContextProvider>
     <Toaster/>
-  </StrictMode>
+  </SocketContextProvider>
 )

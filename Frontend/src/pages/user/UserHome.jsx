@@ -22,7 +22,7 @@ const UserHome = function(){
     const [showPopup, setShowPopup] = useState(false);
     const [ride , setRide] = useState({});
     
-    const {sendMessage, recieveMessage} = SocketContext();
+    const {socket} = SocketContext();
     const [user, setUser] = UserContext();
 
     const handleSearch = async(address, type)=>{
@@ -73,7 +73,7 @@ const UserHome = function(){
     }, [pickup, destination, focusedField]);
 
     useEffect(()=>{
-      sendMessage("join", {id : user._id , type : "user"})
+      socket.emit("join", {id : user._id , type : "user"})
     }, [user]);
 
 return (

@@ -14,9 +14,10 @@ import GetCoord from './pages/GetCoord'
 import AllRides from './pages/ride/AllRides'
 import './App.css'
 import Navbar from './components/Navbar'
+import DeepHome from './pages/captain/DeepHome'
 
 function App() {
-
+  console.log("App working")
   return (
     <>
     <Navbar/>
@@ -35,6 +36,7 @@ function App() {
         <Route path='login' element={<CaptainLogin/>}/>
         <Route path='signup' element={<CaptainSignup/>}/>
         <Route path='home' element={<CaptainProtectWrapper><CaptainHome/></CaptainProtectWrapper>}/>
+        {/* <Route path='home' element={<CaptainProtectWrapper><DeepHome/></CaptainProtectWrapper>}/> */}
         <Route path='logout' element={<CaptainLogout/>}/>
       </Route>
       <Route path='/map' element={<GetCoord/>}/>

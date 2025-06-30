@@ -14,6 +14,11 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
+app.get("/location", (req, res)=>{
+    console.log(navigator.geolocation);
+    // const location = navigator.geolocation.getCurrentPosition(success, error, options)
+    res.send("Fetching live location");
+})
 app.use("/user", userRouter);
 app.use("/captain", captainRouter);
 app.use("/map", mapRouter);
