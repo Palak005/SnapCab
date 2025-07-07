@@ -28,7 +28,7 @@ const UserLogin = () => {
             }
 
             localStorage.setItem("userToken", JSON.stringify(token));
-
+            console.log(data.user);
             toast.success(data.message);
             navigate("/user/createRide");
 

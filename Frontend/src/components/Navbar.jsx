@@ -11,7 +11,7 @@ const Navbar = () => {
             const response = await axios.get("/api/user/logout");
 
             console.log(response.data.message);
-
+            
             //Removing token from local storage
             localStorage.removeItem("userToken");
             setuser("");
@@ -60,3 +60,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+

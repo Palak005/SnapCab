@@ -41,7 +41,7 @@ const CaptainSignup = () => {
             
             toast.success(data.message);
             
-            navigate("/captain/home");
+            navigate("/captain/ride/available");
 
         }catch(error){
             toast.error(error.response.data.message);

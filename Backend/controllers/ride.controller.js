@@ -1,7 +1,7 @@
 import { getFare } from "../services/ride.services.js";
 import Ride from "../models/ride.model.js";
 import { calculateDistance, captainInRadius } from "../services/map.services.js";
-import { broadCastRide } from "../server.js";
+import { broadCastRide, io } from "../server.js";
 import Captain from "../models/captain.model.js";
 
 
@@ -17,7 +17,8 @@ const getRide = async(req, res)=>{
 
 const getLiveRide = async(req, res)=>{
     try{
-        const rides = await Ride.find({status : "pending" });
+        const rides = await Ride.find({status : "pending" }).sort({ createdAt : -1}).limit(10).populate("user");
+        console.log(rides);
         res.status(201).json({rides});
     }catch(error){
         res.status(400).json({error : error.message});
@@ -45,7 +46,7 @@ const createRide =  async(req, res)=>{
     try{        
         const {pickup, destination, vehicleType} = req.body;
         
-        const user = "684bf31fce4024f03c52ed4f";
+        const user = req.user._id;
 
         if(!pickup || !destination || !vehicleType){
             return res.status(400).json({message : "All fields are required"});
@@ -94,6 +95,8 @@ const cancelRide = async(req, res)=>{
             res.status(400).json({message : "Ride does not exist"});
         }
 
+        //updating the captains too
+        io.emit("ride-cancelled", {ride});
         res.status(201).json({message : "Ride Cancelled Successfully", ride});
     }catch(error){
         console.log(error.message);
@@ -101,6 +104,46 @@ const cancelRide = async(req, res)=>{
     }
 };
 
+const acceptRide = async(req, res)=>{
+    try{
+        console.log("accepting request");
+        const {id : rideId} = req.params;
+        const {captainId} = req.body;
+
+        if(!rideId){
+            return res.status(400).json({message : "Ride Id Not Passed"});
+        }
+
+        if(!captainId){
+            return res.status(400).json({message : "Captain Id is required"});
+        }
+
+        const ride = await Ride.findByIdAndUpdate(rideId, {captain : captainId, status : 'accepted'}, {new : true}).populate("user").populate("captain");
+
+        if(!ride){
+            return res.status(400).json({message : "No such ride exists"});
+        }
+
+        //Notifying the user that ride is accepted 
+        const userSocketId = ride.user?.socketId;
+        if(userSocketId){
+            console.log("emitting accept signal" )
+            io.to(userSocketId).emit("ride-accepted", {
+                message : "Ride Accepted",
+                ride,
+            })
+        }
+        console.log(ride);
+
+        res.status(200).json({
+            message : "Ride Accepted Successfully",
+            ride
+        });
+    }catch(error){
+        res.status(400).send({message : error.message});
+    }
+}
 
 
-export default {createRide, getRide, cancelRide, getIndi, getLiveRide};
+
+export default {createRide, getRide, cancelRide, getIndi, getLiveRide, acceptRide};

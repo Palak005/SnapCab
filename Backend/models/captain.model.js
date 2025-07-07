@@ -55,7 +55,7 @@ const captainSchema = new mongoose.Schema({
             type : Number,
         }
     }
-});
+}, { timestamps : true});
 
 captainSchema.statics.hashPassword = async(password)=>{
     return await bcrypt.hash(password, 10);

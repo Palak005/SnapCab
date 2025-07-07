@@ -1,27 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const UserProtectWrapper = ({children})=>{
-    const navigate = useNavigate();
-    const data = localStorage.getItem("userToken");
-    const userToken = JSON.parse(data);
+const UserProtectWrapper = ({ children }) => {
+  const navigate = useNavigate();
+  const [isAuth, setIsAuth] = useState(null);
 
-    useEffect(()=>{
-        if(!userToken){
-           navigate("/user/login");
-           return; 
-        } 
+  useEffect(() => {
+    const token = JSON.parse(localStorage.getItem("userToken"));
 
-        if(userToken.expiry<new Date().getTime()){
-            //Removing expired token
-            localStorage.removeItem("userToken");
-            navigate("/user/login");
-        }
-    });
+    if (!token) {
+      setIsAuth(false);
+      return navigate("/user/login");
+    }
 
-    return <>
-        {children}
-    </>
-}
+    if (token.expiry < new Date().getTime()) {
+      localStorage.removeItem("userToken");
+      setIsAuth(false);
+      return navigate("/user/login");
+    }
+
+    setIsAuth(true);
+  }, []);
+
+  if (isAuth === null) return <div>Loading...</div>;
+  if (isAuth === false) return null;
+
+  return children;
+};
 
 export default UserProtectWrapper;

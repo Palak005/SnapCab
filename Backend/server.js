@@ -57,11 +57,10 @@ export const broadCastRide = ({captains, ride})=>{
 
         io.to(socId).emit("rideCreated", {
             message : "Ride Created Successfully", 
-            ride,
+            ride
         });
     }
 }
-
 
 server.listen(PORT, ()=>{
     connectDb();

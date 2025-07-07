@@ -8,27 +8,28 @@ import CaptainSignup from "./pages/captain/CaptainSignup"
 import UserProtectWrapper from './utils/UserProtectWrapper'
 import CaptainHome from './pages/captain/CaptainHome'
 import CaptainProtectWrapper from './utils/CaptainProtectWrapper'
-import UserLogout from './pages/user/UserLogout'
-import CaptainLogout from './pages/captain/CaptainLogout'
 import GetCoord from './pages/GetCoord'
 import AllRides from './pages/ride/AllRides'
 import './App.css'
 import Navbar from './components/Navbar'
-import DeepHome from './pages/captain/DeepHome'
+import CaptainProfile from './pages/captain/CaptainProfile'
+import AvailableRide from './pages/captain/AvailableRide'
+import ActiveRide from './pages/captain/ActiveRide'
+import CaptainNavbar from './pages/captain/CaptainNavbar'
+import { CaptainContext } from './context/CaptainContext'
 
 function App() {
-  console.log("App working")
+  const [captain, setCaptain] = CaptainContext();
+  
   return (
     <>
-    <Navbar/>
+    {captain? <CaptainNavbar/> : <Navbar/>}
     <Routes>
       <Route path='/' element={<GettingStarted/>}/>
       <Route path='/user'>
         <Route path='createRide' element={<UserProtectWrapper><UserHome/></UserProtectWrapper>}/>
         <Route path='login' element={<UserLogin/>}/>
-        <Route path='logout' element={<UserLogout/>}/>
         <Route path='signup' element={<UserSignup/>}/>
-        {/* <Route path='ride/:id' element={<RideInfo/>}/>   */}
         <Route path='ride/getRide' element={<UserProtectWrapper><AllRides/></UserProtectWrapper>}/>     
       </Route>
 
@@ -36,8 +37,9 @@ function App() {
         <Route path='login' element={<CaptainLogin/>}/>
         <Route path='signup' element={<CaptainSignup/>}/>
         <Route path='home' element={<CaptainProtectWrapper><CaptainHome/></CaptainProtectWrapper>}/>
-        {/* <Route path='home' element={<CaptainProtectWrapper><DeepHome/></CaptainProtectWrapper>}/> */}
-        <Route path='logout' element={<CaptainLogout/>}/>
+        <Route path='profile' element={<CaptainProfile/>}/>
+        <Route path='ride/available' element={<AvailableRide/>}/>
+        <Route path='ride/active' element={<ActiveRide/>} />
       </Route>
       <Route path='/map' element={<GetCoord/>}/>
     </Routes>
