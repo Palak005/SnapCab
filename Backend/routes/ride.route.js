@@ -12,6 +12,7 @@ const router = Router();
 router.get("/getRide", authUser,  rideController.getRide);
 router.post("/create", authUser, rideController.createRide);
 router.get("/liveRide", rideController.getLiveRide);
+router.get("/completedRide", authUser, rideController.getCompletedRide);
 router.get("/:id/cancel", rideController.cancelRide);
 router.post("/:id/accept", rideController.acceptRide);
 router.get("/:id", rideController.getIndi);

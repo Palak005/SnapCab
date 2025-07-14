@@ -36,13 +36,18 @@ const UserHome = function(){
     }
 
     const createRide = async()=>{
-
         //Making api call to book a ride
         try{
             const response = await axios.post("/api/ride/create", {pickup, destination,vehicleType:vehicle});
             const data = response.data;
 
             toast.success(data.message);
+             const token = {
+                userRide : data.ride,
+                expiry : new Date().getTime() + 24*60*60*1000,
+            }
+
+            localStorage.setItem("userRideToken", JSON.stringify(token));
             setCurrRide(data.ride);
         }catch(error){
           toast.error(error.response.data.message);

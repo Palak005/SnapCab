@@ -17,7 +17,7 @@ const getRide = async(req, res)=>{
 
 const getLiveRide = async(req, res)=>{
     try{
-        const rides = await Ride.find({status : "pending" }).sort({ createdAt : -1}).limit(10).populate("user");
+        const rides = await Ride.find({status : "pending" }).sort({ createdAt : -1}).limit(10).populate("user").populate("captain");
         console.log(rides);
         res.status(201).json({rides});
     }catch(error){
@@ -118,7 +118,7 @@ const acceptRide = async(req, res)=>{
             return res.status(400).json({message : "Captain Id is required"});
         }
 
-        const ride = await Ride.findByIdAndUpdate(rideId, {captain : captainId, status : 'accepted'}, {new : true}).populate("user").populate("captain");
+        const ride = await Ride.findByIdAndUpdate(rideId, {captain : captainId, status : 'accepted'}, {new : true}).populate("user");
 
         if(!ride){
             return res.status(400).json({message : "No such ride exists"});
@@ -144,6 +144,17 @@ const acceptRide = async(req, res)=>{
     }
 }
 
+const getCompletedRide = async(req, res)=>{
+    const user = req.user;
+    try{
+        const rides = await Ride.find({ status : "completed" }).sort({ createdAt : -1}).limit(10).populate('captain').populate('user');
+        console.log(rides);
+        res.status(201).json({rides});
+    }catch(error){
+        res.status(400).json({error : error.message});
+    }
+}
 
 
-export default {createRide, getRide, cancelRide, getIndi, getLiveRide, acceptRide};
+
+export default {createRide, getRide, cancelRide, getIndi, getLiveRide, acceptRide, getCompletedRide};
