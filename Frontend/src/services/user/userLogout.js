@@ -2,7 +2,7 @@ import axios from "axios";
 
 const logout = async()=>{
     try{
-        const response = await axios.get("/api/user/logout");
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/user/logout`);
         
         //Removing token from local storage
         localStorage.removeItem("userToken");

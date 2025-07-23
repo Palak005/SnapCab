@@ -34,15 +34,22 @@ const UserHome = function(){
         if(type === "pickup") setpickupSuggest(response.data.suggestedLocations);
         else setdestSuggest(response.data.suggestedLocations);
     }
-
+    
     const createRide = async()=>{
-
         //Making api call to book a ride
         try{
-            const response = await axios.post("/api/ride/create", {pickup, destination,vehicleType:vehicle});
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/ride/create`, {pickup, destination,vehicleType:vehicle}, {
+            withCredentials: true
+          });
             const data = response.data;
 
             toast.success(data.message);
+             const token = {
+                userRide : data.ride,
+                expiry : new Date().getTime() + 24*60*60*1000,
+            }
+
+            localStorage.setItem("userRideToken", JSON.stringify(token));
             setCurrRide(data.ride);
         }catch(error){
           toast.error(error.response.data.message);

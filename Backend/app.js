@@ -8,17 +8,33 @@ import captainRouter from "./routes/captain.route.js";
 import rideRouter from "./routes/ride.route.js";
 import mapRouter from "./routes/map.route.js"
 import paymentRouter from "./routes/payment.route.js";
+import authUser from "./utils/authUser.js";
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://snapcab-frontend.onrender.com'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
-app.get("/location", (req, res)=>{
-    console.log(navigator.geolocation);
-    // const location = navigator.geolocation.getCurrentPosition(success, error, options)
-    res.send("Fetching live location");
+app.get("/location", authUser, (req, res)=>{
+    console.log(req.cookies);
+    res.send(req.cookies);
 })
 
 app.use("/user", userRouter);

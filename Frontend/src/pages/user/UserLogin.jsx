@@ -18,7 +18,7 @@ const UserLogin = () => {
         }
         
         try{
-            const response = await axios.post('/api/user/login', userData);
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/user/login`, userData);
             const data = response.data;
 
             setUser(data.user);

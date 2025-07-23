@@ -6,7 +6,7 @@ import User from "./models/user.model.js";
 import Captain from "./models/captain.model.js";
 
 const server = createServer(app);
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 export const io = new Server(server, {
     cors: {

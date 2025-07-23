@@ -95,7 +95,7 @@ const toRadians = (degrees)=>{
 
 // The Haversine formula to calculate distance between two point using their coordinates
 export const calculateDistance = async({pickup, destination})=> {
-    console.log(pickup, destination);
+  console.log(pickup, destination);
   const coord1 = await getGeocode(pickup);
   const coord2 = await getGeocode(destination);
 

@@ -7,7 +7,7 @@ const GetCoord = ()=>{
 
     const handleSearch = async(e)=>{
         console.log(address);
-        const response = await axios.get('/api/autoSuggestions', {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/autoSuggestions`, {
             params : {address},
         });
 
@@ -19,7 +19,7 @@ const GetCoord = ()=>{
 
         try{
             console.log(address);
-            const response = await axios.post("/api/map/geoCoding", {address});
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/map/geoCoding`, {address});
 
             console.log(response);
         } catch(error){
