@@ -17,31 +17,37 @@ import AvailableRide from './pages/captain/AvailableRide'
 import ActiveRide from './pages/captain/ActiveRide'
 import CaptainNavbar from './pages/captain/CaptainNavbar'
 import { CaptainContext } from './context/CaptainContext'
+import UserRecentRides from './pages/user/UserRecentRides'
+import UserProfile from './pages/user/UserProfile'
 
 function App() {
   const [captain, setCaptain] = CaptainContext();
   
   return (
     <>
-    {captain? <CaptainNavbar/> : <Navbar/>}
     <Routes>
       <Route path='/' element={<GettingStarted/>}/>
-      <Route path='/user'>
-        <Route path='createRide' element={<UserProtectWrapper><UserHome/></UserProtectWrapper>}/>
+      <Route path='/user' element={<Navbar/>}>
         <Route path='login' element={<UserLogin/>}/>
         <Route path='signup' element={<UserSignup/>}/>
-        <Route path='ride/getRide' element={<UserProtectWrapper><AllRides/></UserProtectWrapper>}/>     
+        <Route element={<UserProtectWrapper/>}>
+        <Route path='createRide' element={<UserHome/>}/>
+          <Route path='ride/getRide' element={<AllRides/>}/>     
+          <Route path='ride/completed' element={<UserRecentRides/>}/> 
+          <Route path='profile' element={<UserProfile/>}/> 
+        </Route>
       </Route>
-
-      <Route path='/captain'>
+      <Route path='/captain' element={<CaptainNavbar/>}>
         <Route path='login' element={<CaptainLogin/>}/>
         <Route path='signup' element={<CaptainSignup/>}/>
-        <Route path='home' element={<CaptainProtectWrapper><CaptainHome/></CaptainProtectWrapper>}/>
-        <Route path='profile' element={<CaptainProfile/>}/>
-        <Route path='ride/available' element={<AvailableRide/>}/>
-        <Route path='ride/active' element={<ActiveRide/>} />
+        <Route element={<CaptainProtectWrapper/>}>
+          <Route path='home' element={<CaptainHome/>}/>
+          <Route path='profile' element={<CaptainProfile/>}/>
+          <Route path='ride/available' element={<AvailableRide/>}/>
+          <Route path='ride/active' element={<ActiveRide/>} />
+          <Route path='ride/completed' element={<ActiveRide/>} />
+        </Route>
       </Route>
-      <Route path='/map' element={<GetCoord/>}/>
     </Routes>
     </>
   )

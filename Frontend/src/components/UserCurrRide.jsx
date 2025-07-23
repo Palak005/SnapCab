@@ -11,8 +11,12 @@ const UserCurrRide = ()=>{
 
     const handleClick = async()=>{
       try{
-        const response = await axios.get(`/api/ride/${currRide._id}/cancel`);
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/ride/${currRide._id}/cancel`,  {
+          withCredentials : true,
+        });
         toast.success(response.data.message);
+
+        localStorage.removeItem("userRideToken");
         setCurrRide(null);
       }catch(error){
         toast.error(error.message);
@@ -39,12 +43,13 @@ const UserCurrRide = ()=>{
         }
 
         try{
-
             load(); 
-            const response = await axios.post("http://localhost:4000/api/createOrder", {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/payment/createOrder`, {
                 rideId: 1,
                 fare: "300",
-            });
+            },  {
+            withCredentials : true,
+          });
 
             const data = response.data;
             console.log(response.razorpay_payment_id);
@@ -60,7 +65,9 @@ const UserCurrRide = ()=>{
                         signature: response.razorpay_signature
                     }
 
-                    const res = await axios.post("http://localhost:4000/api/verifyPayment", options);
+                    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/payment/verifyPayment`, options,  {
+                      withCredentials : true,
+                    });
                     console.log(res.data);
                     if(res.data.success){
                         alert('Payment Successfull');
@@ -158,12 +165,12 @@ const UserCurrRide = ()=>{
                   </button>)
                 }
 
-                { currRide.status === 'pending' && ( <button
+                { currRide.status === 'completed' && ( <button
                     onClick={handlePayment}
                     className="w-full p-4 bg-green-700 text-white rounded-xl text-lg font-semibold hover:bg-gray-800 transition-all hover:-translate-y-1"
                   > Pay Captain
                   </button>)
-                }       
+                }  
               </div>
     )
 }

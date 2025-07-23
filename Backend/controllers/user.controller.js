@@ -28,7 +28,11 @@ const Signup = async(req, res)=>{
         const token = newUser.generateAuthToken();
 
         //setting cookie
-        res.cookie("userToken", token);
+        res.cookie("userToken", token, {
+            httpOnly : true,
+            secure : process.env.NODE_ENV === "production",
+            sameSite : "None",
+        });
 
         res.status(201).json({
             message: "User Signed Up Successfully",
@@ -62,13 +66,16 @@ const Login = async(req, res)=>{
         if(!isValid){
             return res.status(400).send({message : "Email or Password incorrect"});
         }
-        console.log("Login")
 
         //generating toke
         const token = user.generateAuthToken();
 
         //setting cookie
-        res.cookie("userToken", token);
+        res.cookie("userToken", token, {
+            httpOnly : true,
+            secure : process.env.NODE_ENV === "production",
+            sameSite : "None",
+        });
 
         res.status(201).json({
             message : "User logged in successfully",

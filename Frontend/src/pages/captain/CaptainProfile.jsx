@@ -11,11 +11,13 @@ const CaptainProfile = ()=>{
 
     const handleClick = async()=>{
         try{
-            const response = await axios.get("/api/captain/logout");
+            const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/captain/logout`, {
+              withCredentials : true,
+            });
             toast.success(response.data.message);
 
             //Removing token from local storage
-            setCaptain({});
+            setCaptain(null);
             localStorage.removeItem("captainToken");
             navigate("/captain/login");
 
@@ -56,16 +58,6 @@ const CaptainProfile = ()=>{
                   <InfoCard title="Member Since" value={(new Date(captain.createdAt)).toDateString()} />
                   <InfoCard title="Email" value={captain.email}/>
                 </div>
-              </div>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold mb-4">Quick Stats</h2>
-              <div className="space-y-4">
-                <StatCard title="Today's Earnings" value="₹2,450" />
-                <StatCard title="Weekly Earnings" value="₹12,850" />
-                <StatCard title="Acceptance Rate" value="92%" />
-                <StatCard title="Cancellation Rate" value="3%" />
               </div>
             </div>
           </div>

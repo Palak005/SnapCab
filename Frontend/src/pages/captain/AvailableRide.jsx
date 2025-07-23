@@ -11,7 +11,7 @@ const AvailableRide = ()=>{
         try{
             //Fetching Available Ride Data
             const calling = async()=>{
-                const response = await axios.get("/api/ride/liveRide");
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/ride/liveRide`);
                 const data = response.data;
                 setRides(data.rides);
                 console.log(data);

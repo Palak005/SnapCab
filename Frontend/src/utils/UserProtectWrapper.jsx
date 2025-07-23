@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
-const UserProtectWrapper = ({ children }) => {
+const UserProtectWrapper = ({}) => {
   const navigate = useNavigate();
   const [isAuth, setIsAuth] = useState(null);
 
@@ -25,7 +25,7 @@ const UserProtectWrapper = ({ children }) => {
   if (isAuth === null) return <div>Loading...</div>;
   if (isAuth === false) return null;
 
-  return children;
+  return <Outlet/>;
 };
 
 export default UserProtectWrapper;

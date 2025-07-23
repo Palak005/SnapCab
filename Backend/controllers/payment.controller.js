@@ -12,7 +12,7 @@ export const createOrder = async(req, res)=>{
 
     //create an order
     const options = {
-        amount: 100*100, //amount in smallest currency unit
+        amount: parseInt(fare)*100, //amount in smallest currency unit
         currency: "INR",
         receipt: "receipt_order_1"
     };

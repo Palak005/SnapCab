@@ -17,7 +17,7 @@ const getRide = async(req, res)=>{
 
 const getLiveRide = async(req, res)=>{
     try{
-        const rides = await Ride.find({status : "pending" }).sort({ createdAt : -1}).limit(10).populate("user");
+        const rides = await Ride.find({status : "pending" }).sort({ createdAt : -1}).limit(10).populate("user").populate("captain");
         console.log(rides);
         res.status(201).json({rides});
     }catch(error){
@@ -104,6 +104,29 @@ const cancelRide = async(req, res)=>{
     }
 };
 
+const startRide = async(req, res)=>{
+    try{
+        const {id} = req.params;
+
+        const ride = await Ride.findByIdAndUpdate(id, {status : "ongoing"}, {new : true});
+
+
+        if(!ride){
+            res.status(400).json({message : "Ride does not exist"});
+        }
+
+        const userId = ride.user;
+        io.to(userId).emit("rideStarted", {
+            message : "ride started",
+        })
+
+        res.status(201).json({message : "Ride Started Successfully", ride});
+    }catch(error){
+        console.log(error.message);
+        res.status(400).json({message : error.message});
+    }
+};
+
 const acceptRide = async(req, res)=>{
     try{
         console.log("accepting request");
@@ -118,7 +141,7 @@ const acceptRide = async(req, res)=>{
             return res.status(400).json({message : "Captain Id is required"});
         }
 
-        const ride = await Ride.findByIdAndUpdate(rideId, {captain : captainId, status : 'accepted'}, {new : true}).populate("user").populate("captain");
+        const ride = await Ride.findByIdAndUpdate(rideId, {captain : captainId, status : 'accepted'}, {new : true}).populate("user");
 
         if(!ride){
             return res.status(400).json({message : "No such ride exists"});
@@ -144,6 +167,15 @@ const acceptRide = async(req, res)=>{
     }
 }
 
+const getCompletedRide = async(req, res)=>{
+    const user = req.user;
+    try{
+        const rides = await Ride.find({ status : "completed" }).sort({ createdAt : -1}).limit(10).populate('captain').populate('user');
+        console.log(rides);
+        res.status(201).json({rides});
+    }catch(error){
+        res.status(400).json({error : error.message});
+    }
+}
 
-
-export default {createRide, getRide, cancelRide, getIndi, getLiveRide, acceptRide};
+export default {createRide, getRide, cancelRide, getIndi, getLiveRide, acceptRide, getCompletedRide, startRide};

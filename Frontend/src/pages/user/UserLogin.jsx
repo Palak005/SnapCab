@@ -18,9 +18,10 @@ const UserLogin = () => {
         }
         
         try{
-            const response = await axios.post('/api/user/login', userData);
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/user/login`, userData, {withCredentials: true});
             const data = response.data;
 
+            console.log(response.data);
             setUser(data.user);
             const token = {
                 user : data.user,
@@ -34,7 +35,7 @@ const UserLogin = () => {
 
         } catch(error){
             toast.error( error.response.data.message);
-            console.error('Login failed:', error.response.data.message);
+            console.error('Login failed:', error.response);
         }
     };
 

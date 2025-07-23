@@ -72,12 +72,16 @@ const Login = async(req, res)=>{
             return res.status(400).send({message : "Email or Password incorrect"});
         }
 
-        //generating toke
+        //generating token
         const token = captain.generateAuthToken();
 
         //setting cookie
 
-        res.cookie("captainToken", token);
+        res.cookie("captainToken", token, {
+            httpOnly : true,
+            secure : process.env.NODE_ENV === "production",
+            sameSite : "None",
+        });
 
         res.status(201).json({
             message : "Captain logged in Successfully",

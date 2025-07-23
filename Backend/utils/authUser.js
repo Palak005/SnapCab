@@ -4,6 +4,7 @@ import User from "../models/user.model.js";
 const authUser = async(req, res, next)=>{
     try{
         const {userToken} = req.cookies;
+        console.log(req.cookies);
         if(!userToken){
             return res.status(400).json({
                 message : "userToken Doesn't exist"

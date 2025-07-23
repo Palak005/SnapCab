@@ -27,22 +27,34 @@ const UserHome = function(){
     const [user, setUser] = UserContext();
 
     const handleSearch = async(address, type)=>{
-        const response = await axios.get('/api/map/autoSuggestion', {
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/map/autoSuggestion`, {
             params : {address},
+        }, 
+        {
+          withCredentials : true,
         });
 
         if(type === "pickup") setpickupSuggest(response.data.suggestedLocations);
         else setdestSuggest(response.data.suggestedLocations);
     }
-
+    
     const createRide = async()=>{
-
         //Making api call to book a ride
+
+          console.log("Creating Ride");
         try{
-            const response = await axios.post("/api/ride/create", {pickup, destination,vehicleType:vehicle});
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/ride/create`, {pickup, destination,vehicleType:vehicle}, {
+            withCredentials: true
+          });
             const data = response.data;
 
             toast.success(data.message);
+             const token = {
+                userRide : data.ride,
+                expiry : new Date().getTime() + 24*60*60*1000,
+            }
+
+            localStorage.setItem("userRideToken", JSON.stringify(token));
             setCurrRide(data.ride);
         }catch(error){
           toast.error(error.response.data.message);

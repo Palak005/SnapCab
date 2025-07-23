@@ -28,7 +28,9 @@ const CaptainSignup = () => {
         e.preventDefault();
 
         try{
-            const response = await axios.post("/api/captain/signup", captainDetails);
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/captain/signup`, captainDetails, {
+                withCredentials : true,
+            });
             const data = response.data;
             
             setCaptain(data.captain);

@@ -8,6 +8,7 @@ import CaptainContextProvider from './context/CaptainContext.jsx'
 import {Toaster} from "react-hot-toast";
 import { SocketContextProvider } from './context/SocketContext.jsx'
 import { UserRideContextProvider } from './context/UserRideContext.jsx'
+import { CaptainRideContextProvider } from './context/CaptainRideContext.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -15,9 +16,11 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
     <CaptainContextProvider>
     <UserContextProvider>
+      <CaptainRideContextProvider>
       <UserRideContextProvider>
       <App />
       </UserRideContextProvider>
+      </CaptainRideContextProvider>
     </UserContextProvider>
     </CaptainContextProvider>
     </BrowserRouter>

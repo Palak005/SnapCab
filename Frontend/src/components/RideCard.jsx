@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState } from 'react';
 import { SocketContext } from '../context/SocketContext';
 import axios from "axios";
 import { CaptainContext } from '../context/CaptainContext';
+import { useNavigate } from 'react-router-dom';
+import { CaptainRideContext } from '../context/CaptainRideContext';
 
 const RideCard = ({ ride }) => {
   const [cancel, setCancel] = useState(false);
-  const {socket} = SocketContext();
   const [captain] = CaptainContext();
+  const [captainRide, setCaptainRide] = CaptainRideContext();
+  const navigate = useNavigate();
 
   const { 
     _id: rideId,
@@ -46,11 +49,22 @@ const RideCard = ({ ride }) => {
 
   const handleClick = async()=>{
     try{
-      console.log("handling accept");
-      const response = await axios.post(`/api/ride/${rideId}/accept`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/ride/${rideId}/accept`, {
         captainId : captain._id,
+      }, {
+        withCredentials : true,
       });
-      console.log(response);
+
+        const data = response.data;
+
+        const token = {
+            captainRide : data.ride,
+            expiry : new Date().getTime() + 24*60*60*1000,
+        }
+
+        localStorage.setItem("captainRideToken", JSON.stringify(token));
+        setCaptainRide(data.ride);
+        navigate("/captain/ride/active")
     }catch(error){
       console.log(error);
     }
