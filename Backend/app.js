@@ -18,7 +18,7 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://snapcab-frontend.onrender.com",
   credentials: true
 }));
 
